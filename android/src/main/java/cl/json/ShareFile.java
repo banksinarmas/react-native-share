@@ -117,29 +117,22 @@ public class ShareFile {
 
         final MimeTypeMap mime = MimeTypeMap.getSingleton();
         this.extension = mime.getExtensionFromMimeType(getType());
-        if(this.isBase64File()) {
-            String encodedImg = this.uri.getSchemeSpecificPart().substring(this.uri.getSchemeSpecificPart().indexOf(";base64,") + 8);
-            try {
-                File dir = new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS );
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-                File file = new File(dir, System.currentTimeMillis() + "." + this.extension);
-                final FileOutputStream fos = new FileOutputStream(file);
-                fos.write(Base64.decode(encodedImg, Base64.DEFAULT));
-                fos.flush();
-                fos.close();
-                return Uri.fromFile(file);
-
-            } catch (IOException e) {
-                e.printStackTrace();
+        String encodedImg = this.uri.getSchemeSpecificPart().substring(this.uri.getSchemeSpecificPart().indexOf(";base64,") + 8);
+        try {
+            File dir = new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS );
+            if (!dir.exists()) {
+                dir.mkdirs();
             }
-        } else if(this.isLocalFile()) {
-            Uri uri = Uri.parse(this.url);
+            File file = new File(dir, System.currentTimeMillis() + "." + this.extension);
+            final FileOutputStream fos = new FileOutputStream(file);
+            fos.write(Base64.decode(encodedImg, Base64.DEFAULT));
+            fos.flush();
+            fos.close();
+            return Uri.fromFile(file);
 
-            return uri;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return null;
     }
 }
